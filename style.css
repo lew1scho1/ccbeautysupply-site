@@ -1,0 +1,51 @@
+:root {
+  --green: #25D366;
+  --teal: #128C7E;
+  --ink: #1a1a1a;
+  --muted: #5b5b5b;
+  --line: #e6e6e6;
+  --bg: #ffffff;
+  --soft: #f4faf7;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #f1f1f1;
+    --muted: #b4b4b4;
+    --line: #2c2c2c;
+    --bg: #121212;
+    --soft: #18211d;
+    --teal: #3fc3ae;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0 }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+  line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+a { color: var(--teal) }
+.wrap { max-width: 760px; margin: 0 auto; padding: 0 20px }
+header { padding: 56px 0 28px; text-align: center }
+.tag { display: inline-block; background: var(--green); color: #fff; font-weight: 600;
+  letter-spacing: .08em; font-size: 13px; padding: 4px 14px; border-radius: 999px }
+h1 { font-size: clamp(30px, 6vw, 44px); line-height: 1.1; font-weight: 800; margin-top: 16px }
+h1 .script { display: block; font-family: 'Pacifico', cursive; font-weight: 400; color: var(--teal);
+  font-size: .8em; margin-top: 6px }
+.lead { color: var(--muted); margin-top: 12px }
+.cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 26px }
+.btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 600;
+  padding: 12px 20px; border-radius: 12px; border: 2px solid var(--green) }
+.btn.primary { background: var(--green); color: #fff }
+.btn.ghost { color: var(--ink) }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; margin: 18px 0 40px }
+.card { background: var(--soft); border-radius: 16px; padding: 20px }
+.card h2 { font-size: 15px; letter-spacing: .04em; text-transform: uppercase; color: var(--teal) }
+.card p { margin-top: 6px }
+.hours td { padding: 2px 0 } .hours td:first-child { padding-right: 14px; color: var(--muted) }
+.small { font-size: 14px; color: var(--muted) }
+footer { border-top: 1px solid var(--line); padding: 22px 0 40px; font-size: 14px; color: var(--muted); text-align: center }
+footer a { margin: 0 8px }
+article h1 { font-size: 34px; margin: 48px 0 6px; text-align: left }
+article h2 { font-size: 19px; margin: 28px 0 8px }
+article p, article li { margin-top: 8px }
+article ul { padding-left: 22px }
