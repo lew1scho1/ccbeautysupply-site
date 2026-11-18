@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Connect WhatsApp — CC Beauty Supply</title>
+<link rel="icon" href="icon-1024.png">
+<style>
+  body{font-family:system-ui,Segoe UI,Arial,sans-serif;max-width:560px;margin:48px auto;padding:0 16px;color:#1a1a1a}
+  button{font-size:18px;padding:14px 22px;border:0;border-radius:8px;background:#25d366;color:#052e16;font-weight:600;cursor:pointer}
+  button:disabled{opacity:.5;cursor:default}
+  #log{margin-top:24px;white-space:pre-wrap;font:14px/1.5 ui-monospace,Consolas,monospace;background:#f4f4f4;padding:12px;border-radius:8px}
+</style>
+</head>
+<body>
+<h1>Connect store WhatsApp</h1>
+<p>Store use only. Do this on the store computer with the store phone next to you — the WhatsApp Business app on the store phone must stay logged in.</p>
+<button id="go" disabled>Connect WhatsApp Business app</button>
+<div id="log">Loading…</div>
+
+<script>
+// 두 값은 Meta 앱 대시보드에서 가져온다(비밀이 아니다). 채우기 전에는 버튼이 꺼져 있다.
+const APP_ID    = "1573107601170051";      // 앱 `CCBTY Messaging`의 App ID(2026-11-18, 본인 캡처로 확인)
+const CONFIG_ID = "2250792592142266";      // Embedded Signup Builder → 만든 구성 `Store WhatsApp connect`의 ID(2026-11-18, 본인이 알려 줌)
+const HOOK      = "https://lew-cc-server-1.tail80d772.ts.net/wa/onboard";   // 가게 서버(wa_hook.py)
+
+const log = (t) => { document.getElementById("log").textContent += "\n" + t; };
+document.getElementById("log").textContent = "";
+let code = null, waba = null, sent = false;
+
+async function maybeSend() {
+  if (sent || !code || !waba) return;
+  sent = true;
+  log("Sending to the store server…");
+  try {
+    const r = await fetch(HOOK, {method: "POST", headers: {"Content-Type": "application/json"},
+                                 body: JSON.stringify({code, waba_id: waba})});
+    log("Server: " + r.status + " " + (await r.text()));
+  } catch (e) { log("Could not reach the store server: " + e); }
+}
+
+window.addEventListener("message", (ev) => {
+  if (!/^https:\/\/(www|web)\.facebook\.com$/.test(ev.origin)) return;
+  let d; try { d = typeof ev.data === "string" ? JSON.parse(ev.data) : ev.data; } catch { return; }
+  if (!d || d.type !== "WA_EMBEDDED_SIGNUP") return;
+  log("Meta says: " + d.event);
+  if (d.event === "FINISH_WHATSAPP_BUSINESS_APP_ONBOARDING" || d.event === "FINISH") {
+    waba = d.data && d.data.waba_id; maybeSend();
+  } else if (d.event === "CANCEL") { log("Cancelled."); }
+});
+
+window.fbAsyncInit = () => {
+  FB.init({appId: APP_ID, autoLogAppEvents: true, xfbml: false, version: "v23.0"});
+  const btn = document.getElementById("go");
+  btn.disabled = APP_ID.startsWith("PUT_") || CONFIG_ID.startsWith("PUT_");
+  log(btn.disabled ? "App ID / Config ID not filled in yet." : "Ready.");
+  btn.onclick = () => FB.login((resp) => {
+    if (resp.authResponse && resp.authResponse.code) { code = resp.authResponse.code; log("Got login code."); maybeSend(); }
+    else log("Login was cancelled or failed.");
+  }, {config_id: CONFIG_ID, response_type: "code", override_default_response_type: true,
+      extras: {setup: {}, featureType: "whatsapp_business_app_onboarding", sessionInfoVersion: "3"}});
+};
+</script>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
+</body>
+</html>
